@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Socket Test Client</title>
+  </head>
+  <body>
+    <h2>Socket.IO Test Client</h2>
+
+    <label>JWT Token:</label><br />
+    <input id="token" style="width: 500px" /><br /><br />
+
+    <label>Session ID:</label><br />
+    <input id="session" value="band1" /><br /><br />
+
+    <button id="join">Join Session</button>
+    <button id="select">Admin: Select Song</button>
+
+    <pre id="log"></pre>
+
+    <!-- ✅ Make sure this line loads FIRST -->
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+    <script>
+      console.log("✅ Script loaded"); // <-- you should see this immediately
+
+      const log = (msg) => {
+        document.getElementById("log").textContent += msg + "\n";
+        console.log(msg); // <-- ensures messages also go to console
+      };
+
+      let socket;
+
+      document.getElementById("join").onclick = () => {
+        const token = document.getElementById("token").value;
+        const sessionId = document.getElementById("session").value;
+
+        console.log("📡 Sending join-session with:", sessionId, token); // debug
+
+        socket = io("http://localhost:4000");
+
+        socket.on("connect", () => log("✅ Connected: " + socket.id));
+        socket.on("auth:error", (err) => log("❌ Auth error: " + JSON.stringify(err)));
+        socket.on("session:joined", (data) => log("✅ Joined: " + JSON.stringify(data)));
+        socket.on("session:song-selected", (data) =>
+          log("🎵 Song selected: " + JSON.stringify(data))
+        );
+
+        socket.emit("join-session", { sessionId, token });
+      };
+
+      document.getElementById("select").onclick = () => {
+        const sessionId = document.getElementById("session").value;
+        socket.emit("admin:select-song", { sessionId, songId: "hey_jude" });
+      };
+    </script>
+  </body>
+</html>

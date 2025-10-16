@@ -4,7 +4,19 @@ const http = require('http');
 const cors = require('cors');
 const { Server } = require('socket.io');
 const { ok } = require('assert');
+const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
+
 const authRoutes = require("./routes/auth");
+const socketHandler = require('./socket-handler');
+
+const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
+
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+}).then(() => console.log("Connected to MongoDB atlas"))
+.catch(err => console.error("MongoDB connection error: ", err));
 
 const app = express();
 app.use(cors());
@@ -23,10 +35,8 @@ const io = new Server(server, {
 });
 
 io.on('connection', (socket) => {
-    console.log('a user connected', socket.id);
-    socket.on('disconnect', () => {
-        console.log('user disconnected', socket.id);
-    });
+    console.log('socket connected', socket.id);
+    socketHandler(io, socket)
 });
 
 const PORT = process.env.PORT || 4000;
