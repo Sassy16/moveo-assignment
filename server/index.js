@@ -8,6 +8,8 @@ const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 
 const authRoutes = require("./routes/auth");
+const songsRoutes = require("./routes/songs");
+
 const socketHandler = require('./socket-handler');
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
@@ -22,6 +24,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/api/auth", authRoutes);
+app.use("/api/songs", songsRoutes);
 
 app.get('/api/health', (req, res) => {
     res.json({ok: true});

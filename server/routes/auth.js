@@ -9,34 +9,57 @@ const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
 // Signup
 router.post("/signup", async (req, res) => {
   try {
-    const { username, password, instrument, isOnlyVocal, isAdmin } = req.body;
-
+    const { username, password, instrument, isOnlyVocal } = req.body;
     if (!username || !password) {
       return res.status(400).json({ error: "Missing username or password" });
     }
-
     const existingUser = await User.findOne({ username });
     if (existingUser) return res.status(400).json({ error: "User already exists" });
-
     const hash = await bcrypt.hash(password, 10);
-
     const newUser = new User({
       username,
       passwordHash: hash,
       instrument: instrument || "vocals",
       isOnlyVocal: Boolean(isOnlyVocal),
-      isAdmin: Boolean(isAdmin),
+      isAdmin: false,
     });
-
     await newUser.save();
     res.json({ message: "Signup successful" });
-  } catch (err) {
+  } 
+  catch (err) {
     console.error("Signup error:", err);
     res.status(500).json({ error: "Server error" });
   }
 });
 
-// Login
+router.post("/admin-signup", async (req, res) =>{
+    try{
+        const {username, password, instrument, isOnlyVocal} = req.body;
+        if (!username || !password) {
+            return res.status(400).json({ error: "Missing username or password"});
+        }
+        const existingUser = await User.findOne({username});
+        if (existingUser){
+            return res.status(400).json({ error: "Username already exists"});
+        }
+        const hash  = await bcrypt.hash(password, 10);
+        const newUser = new User({
+            username,
+            passwordHash: hash,
+            instrument: instrument || "vocals",
+            isOnlyVocal: Boolean(isOnlyVocal),
+            isAdmin: true
+        });
+
+        await newUser.save();
+        res.json({ message: "Admin signup successful"})
+    }
+    catch (err) {
+        console.error("Admin signup error", err);
+        res.status(500).json({ error: "server error" });
+    }
+});
+
 router.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -59,7 +82,8 @@ router.post("/login", async (req, res) => {
     );
 
     res.json({ token });
-  } catch (err) {
+  }
+  catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ error: "Server error" });
   }
