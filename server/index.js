@@ -12,6 +12,16 @@ const songsRoutes = require("./routes/songs");
 
 const socketHandler = require('./socket-handler');
 
+const path = require("path");
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../client/build")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+  });
+}
+
+
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
 
 mongoose.connect(process.env.MONGO_URI, {
