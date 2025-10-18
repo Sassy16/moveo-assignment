@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { io } from "socket.io-client";
+import "../App.css";
+import { API_BASE_URL } from "../config";
 
 export default function Live() {
   const navigate = useNavigate();
@@ -33,7 +35,7 @@ export default function Live() {
     }
 
     axios
-      .get(`http://localhost:4000/api/songs/${songId}`)
+      .get(`${API_BASE_URL}/api/songs/${songId}`)
       .then((res) => {
         console.log("Fetched song:", res.data);
         setSong(res.data); 
@@ -51,7 +53,7 @@ export default function Live() {
       return;
     }
 
-    const s = io("http://localhost:4000");
+    const s = io(API_BASE_URL);
     setSocket(s);
 
     s.on("connect", () => {

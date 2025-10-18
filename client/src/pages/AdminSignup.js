@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
+import { API_BASE_URL } from "../config";
 
 function AdminSignup() {
   const [username, setUsername] = useState("");
