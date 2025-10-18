@@ -25,22 +25,21 @@ export default function Main() {
       return;
     }
 
-    const s = io("http://localhost:4000");
-    setSocket(s);
+    const socket = io("http://localhost:4000");
 
-    s.on("connect", () => {
-      s.emit("join-session", { token });
+    socket.on("connect", () => {
+      socket.emit("join-session", { token });
     });
 
-    s.on("session:song-selected", ({ songId }) => {
+    socket.on("session:song-selected", ({ songId }) => {
       navigate(`/live?songId=${songId}`);
     });
 
-    s.on("session:ended", () => {
+    socket.on("session:ended", () => {
       navigate("/main");
     });
 
-    return () => s.disconnect();
+    return () => socket.disconnect();
   }, [token, navigate]);
 
   const handleLogout = () => {
@@ -55,8 +54,12 @@ export default function Main() {
       <header className="main-header">
         <h1>Moveo Band</h1>
         <div>
-          <span>Welcome, <strong>{user.username}</strong></span>
-          <button className="logout-btn" onClick={handleLogout}>Logout</button>
+          <span>
+            Welcome, <strong>{user.username}</strong>
+          </span>
+          <button className="logout-btn" onClick={handleLogout}>
+            Logout
+          </button>
         </div>
       </header>
 
@@ -70,7 +73,11 @@ export default function Main() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
               />
-              <button onClick={() => navigate(`/results?query=${encodeURIComponent(query)}`)}>
+              <button
+                onClick={() =>
+                  navigate(`/results?query=${encodeURIComponent(query)}`)
+                }
+              >
                 Search
               </button>
             </div>
