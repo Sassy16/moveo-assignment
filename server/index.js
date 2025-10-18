@@ -11,23 +11,14 @@ const authRoutes = require("./routes/auth");
 const songsRoutes = require("./routes/songs");
 const socketHandler = require('./socket-handler');
 
+const app = express();
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
 
-const app = express();
-
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("Connected to MongoDB Atlas"))
-  .catch(err => console.error("MongoDB connection error: ", err));
-
-// Routes
+// API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/songs", songsRoutes);
 
@@ -35,28 +26,36 @@ app.get('/api/health', (req, res) => {
   res.json({ ok: true });
 });
 
-// Serve React frontend in production
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../client/build")));
-    app.get("/*", function (req, res) {
-    res.sendFile(path.join(__dirname, "../client/build", "index.html"));
-    });
+// MongoDB connection
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log("✅ Connected to MongoDB Atlas"))
+.catch(err => console.error("❌ MongoDB connection error:", err));
 
+// ⚙️ Serve React build in production
+if (process.env.NODE_ENV === "production") {
+  const clientPath = path.join(__dirname, "../client/build");
+  app.use(express.static(clientPath));
+
+  // 👇 FIX: Use a regex-style catch-all route instead of "*"
+  app.get(/.*/, (req, res) => {
+    res.sendFile(path.join(clientPath, "index.html"));
+  });
 }
 
-// Create HTTP server & setup socket.io
+// Socket.io setup
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: {
-    origin: '*',
-  }
+  cors: { origin: '*' }
 });
 
 io.on('connection', (socket) => {
-  console.log('socket connected', socket.id);
+  console.log('🔌 Socket connected:', socket.id);
   socketHandler(io, socket);
 });
 
 // Start server
 const PORT = process.env.PORT || 4000;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
