@@ -76,19 +76,29 @@ export default function Live() {
     if (!auto.running) return;
 
     const el = scrollRef.current;
+
     const step = () => {
-      if (el) el.scrollTop += auto.speed;
+      if (el) {
+        el.scrollTop += auto.speed;
+      }
       rafRef.current = requestAnimationFrame(step);
     };
-    rafRef.current = requestAnimationFrame(step);
+
+    setTimeout(() => {
+      rafRef.current = requestAnimationFrame(step);
+    }, 50);
 
     return () => cancelAnimationFrame(rafRef.current);
   }, [auto]);
 
-  // Socket actions
   const startAutoScroll = () => {
     const el = scrollRef.current;
-    if (el) el.scrollTop += 1; // Initial nudge
+    if (el) {
+      el.style.overflowY = "hidden";
+      void el.offsetHeight;
+      el.style.overflowY = "scroll";
+      el.scrollTop += 1;
+    }
     socket.emit("session:autoscroll-start", { speed: 0.5 });
   };
 
