@@ -11,7 +11,6 @@ export default function Live() {
   const songId = query.get("songId");
   const token = localStorage.getItem("token");
 
-  // Get user info from token
   const user = useMemo(() => {
     if (!token) return null;
     try {
@@ -38,7 +37,7 @@ export default function Live() {
       .get(`${API_BASE_URL}/api/songs/${songId}`)
       .then((res) => {
         console.log("Fetched song:", res.data);
-        setSong(res.data); 
+        setSong(res.data);
       })
       .catch((err) => {
         console.error("Failed to load song:", err);
@@ -88,7 +87,9 @@ export default function Live() {
 
   // Socket actions
   const startAutoScroll = () => {
-    socket.emit("session:autoscroll-start", { speed: 0.7 });
+    const el = scrollRef.current;
+    if (el) el.scrollTop += 1; // Initial nudge
+    socket.emit("session:autoscroll-start", { speed: 0.5 });
   };
 
   const stopAutoScroll = () => {
@@ -99,7 +100,6 @@ export default function Live() {
     socket.emit("admin:quit-session");
   };
 
-  // Detect Hebrew for direction
   const isHebrew = (text) => /[\u0590-\u05FF]/.test(text);
 
   return (
