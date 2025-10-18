@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
+import { API_BASE_URL } from "../config";
 
 function Signup() {
   const [username, setUsername] = useState("");
@@ -13,7 +14,7 @@ function Signup() {
   const handleSignup = async () => {
     try {
       // Signup the user
-      await axios.post("http://localhost:4000/api/auth/signup", {
+      await axios.post(`${API_BASE_URL}/api/auth/signup`, {
         username,
         password,
         instrument,
@@ -21,7 +22,7 @@ function Signup() {
       });
 
       // Immediately login after signup
-      const loginRes = await axios.post("http://localhost:4000/api/auth/login", {
+      const loginRes = await axios.post(`${API_BASE_URL}/api/auth/login`, {
         username,
         password
       });

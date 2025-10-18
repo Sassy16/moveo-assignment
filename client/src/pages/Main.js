@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import "../App.css";
+import { API_BASE_URL } from "../config";
 
 export default function Main() {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ export default function Main() {
       return;
     }
 
-    const socket = io("http://localhost:4000");
+    const socket = io(API_BASE_URL);
 
     socket.on("connect", () => {
       socket.emit("join-session", { token });

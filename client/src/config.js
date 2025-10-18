@@ -1,0 +1,1 @@
+export const API_BASE_URL = "https://moveo-assignment-production-6a25.up.railway.app";

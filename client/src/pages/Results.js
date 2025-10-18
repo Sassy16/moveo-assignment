@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { io } from "socket.io-client";
 import "../App.css";
+import { API_BASE_URL } from "../config";
 
 export default function Results() {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ export default function Results() {
     }
 
     axios
-      .get(`http://localhost:4000/api/songs?query=${encodeURIComponent(query)}`)
+      .get(`${API_BASE_URL}/api/songs?query=${encodeURIComponent(query)}`)
       .then((res) => setResults(res.data))
       .catch((err) => console.error("Failed to load songs:", err));
   }, [query, user, navigate]);
@@ -36,7 +37,7 @@ export default function Results() {
   // Setup socket connection
   useEffect(() => {
     if (!token) return;
-    const s = io("http://localhost:4000");
+    const s = io(API_BASE_URL);
     setSocket(s);
 
     s.on("connect", () => s.emit("join-session", { token }));

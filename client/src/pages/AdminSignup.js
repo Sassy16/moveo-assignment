@@ -13,7 +13,7 @@ function AdminSignup() {
   const handleSignup = async () => {
     try {
       // Signup as admin
-      await axios.post("http://localhost:4000/api/auth/admin-signup", {
+      await axios.post(`${API_BASE_URL}/api/auth/admin-signup`, {
         username,
         password,
         instrument,
@@ -21,7 +21,7 @@ function AdminSignup() {
       });
 
       // Immediately login after signup
-      const loginRes = await axios.post("http://localhost:4000/api/auth/login", {
+      const loginRes = await axios.post(`${API_BASE_URL}/api/auth/login`, {
         username,
         password
       });
