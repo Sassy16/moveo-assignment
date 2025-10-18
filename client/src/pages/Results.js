@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { io } from "socket.io-client";
+import "../App.css";
 
 export default function Results() {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ export default function Results() {
   const [results, setResults] = useState([]);
   const [socket, setSocket] = useState(null);
 
+  // Get user info from token
   const user = useMemo(() => {
     if (!token) return null;
     try {
@@ -19,7 +21,6 @@ export default function Results() {
     }
   }, [token]);
 
-  // 1️⃣ Fetch songs from backend based on search query
   useEffect(() => {
     if (!user?.isAdmin) {
       navigate("/main");
@@ -32,7 +33,7 @@ export default function Results() {
       .catch((err) => console.error("Failed to load songs:", err));
   }, [query, user, navigate]);
 
-  // 2️⃣ Connect to socket
+  // Setup socket connection
   useEffect(() => {
     if (!token) return;
     const s = io("http://localhost:4000");
@@ -44,33 +45,38 @@ export default function Results() {
     return () => s.disconnect();
   }, [token, navigate]);
 
-  // 3️⃣ Select a song → emit socket event + go to Live page
   const selectSong = (songId) => {
     socket.emit("admin:select-song", { songId });
     navigate(`/live?songId=${songId}`);
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Results for "{query}"</h2>
+    <div className="results-container">
+      <h2>Results for "<span className="highlight">{query}</span>"</h2>
 
-      {results.length === 0 && <p>No songs found.</p>}
+      {results.length === 0 && (
+        <p className="no-results">No songs found. Try a different query.</p>
+      )}
 
-      {results.map((song) => (
-        <div
-          key={song.id}
-          style={{
-            border: "1px solid #ccc",
-            padding: "10px",
-            marginBottom: "10px",
-            cursor: "pointer",
-          }}
-          onClick={() => selectSong(song.id)}
-        >
-          <h3>{song.title}</h3>
-          <p>{song.artist}</p>
-        </div>
-      ))}
+      <div className="results-grid">
+        {results.map((song) => (
+          <div
+            key={song.id}
+            className="song-card"
+            onClick={() => selectSong(song.id)}
+          >
+            {song.image ? (
+              <img src={song.image} alt={song.title} className="song-image" />
+            ) : (
+              <div className="song-placeholder">🎵</div>
+            )}
+            <div className="song-info">
+              <h3>{song.title}</h3>
+              <p>{song.artist}</p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

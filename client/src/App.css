@@ -1,38 +1,393 @@
-.App {
+
+* 
+{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #1a1a1a, #333);
+  color: #fff;
+  min-height: 100vh;
+}
+
+
+.auth-container {
+  max-width: 400px;
+  margin: 80px auto;
+  padding: 2rem;
+  background: #222;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.auth-container h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.auth-container input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.auth-container input:focus {
+  outline: 2px solid #007bff;
+}
+
+.auth-container button {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #007bff;
+  color: #fff;
+  transition: background 0.2s ease-in-out;
+}
+
+.auth-container button:hover {
+  background: #0056b3;
+}
+
+
+.role-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.role-buttons button:first-child {
+  background: #28a745;
+}
+
+.role-buttons button:first-child:hover {
+  background: #218838;
+}
+
+.role-buttons button:last-child {
+  background: #ff5722;
+}
+
+.role-buttons button:last-child:hover {
+  background: #e64a19;
+}
+
+/* 🎚️ Toggle switch */
+.toggle-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 50px;
+  height: 26px;
+  display: inline-block;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #777;
+  transition: 0.3s;
+  border-radius: 26px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+.toggle-switch input:checked + .slider {
+  background-color: #007bff;
+}
+
+.toggle-switch input:checked + .slider:before {
+  transform: translateX(24px);
+}
+
+.toggle-text {
+  font-size: 1rem;
+  user-select: none;
+}
+
+/* Main page components*/
+.main-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #222;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.main-header h1 {
+  font-size: 2rem;
+}
+
+.logout-btn {
+  padding: 6px 14px;
+  background: #900;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: #b00;
+}
+
+.main-content {
+  text-align: center;
+}
+
+.search-box {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.search-box input {
+  padding: 10px;
+  width: 60%;
+  border: none;
+  border-radius: 8px;
+}
+
+.search-box button {
+  padding: 10px 20px;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.search-box button:hover {
+  background: #0056b3;
+}
+
+
+/* Results Page */
+.results-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #222;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  text-align: center;
+}
+
+.results-container h2 {
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+}
+
+.highlight {
+  color: #007bff;
+}
+
+.no-results {
+  font-size: 1.2rem;
+  opacity: 0.8;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.song-card {
+  background: #333;
+  border-radius: 12px;
+  padding: 15px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.song-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+}
+
+.song-image {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.song-placeholder {
+  width: 100%;
+  height: 140px;
+  background: #555;
+  color: #fff;
+  font-size: 3rem;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  border-radius: 10px;
+  margin-bottom: 15px;
 }
 
-.App-link {
-  color: #61dafb;
+.song-info h3 {
+  font-size: 1.2rem;
+  margin-bottom: 5px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.song-info p {
+  font-size: 1rem;
+  opacity: 0.8;
 }
+
+
+/* Live Page Styling */
+.live-container {
+  background: #000;
+  color: #fff;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.live-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.live-header h1 {
+  font-size: 2.8rem;
+  margin: 0;
+}
+
+.live-header h2 {
+  font-size: 1.6rem;
+  opacity: 0.7;
+  margin: 8px 0 0;
+}
+
+.lyrics-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 10%;
+  font-size: 1.8rem;
+  line-height: 2.2rem;
+  scrollbar-width: none; 
+}
+
+.lyrics-container::-webkit-scrollbar {
+  display: none; 
+}
+
+.lyrics-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+
+.lyrics-line.ltr {
+  direction: ltr;
+}
+
+.lyrics-line.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+.word-block {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 3ch;
+  text-align: center;
+}
+
+.chord {
+  font-family: monospace;
+  font-size: 1rem;
+  color: #00bfff;
+  height: 1.2em;
+}
+
+.lyric {
+  font-size: 1.8rem;
+}
+
+.floating-controls {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 12px;
+}
+
+.floating-controls button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.floating-controls button:hover {
+  background: #0056b3;
+}
+
+.quit-btn {
+  background: #900;
+}
+
+.quit-btn:hover {
+  background: #b00;
+}
+
+

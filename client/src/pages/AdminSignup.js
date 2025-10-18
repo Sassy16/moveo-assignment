@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "../App.css";
 
 function AdminSignup() {
   const [username, setUsername] = useState("");
@@ -35,7 +36,7 @@ function AdminSignup() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="auth-container">
       <h2>Admin Signup</h2>
 
       <input
@@ -57,15 +58,16 @@ function AdminSignup() {
         onChange={(e) => setInstrument(e.target.value)}
       />
 
-      <div>
-        <label>
+      <div className="toggle-group">
+        <label className="toggle-switch">
           <input
             type="checkbox"
             checked={isOnlyVocal}
             onChange={(e) => setIsOnlyVocal(e.target.checked)}
           />
-          Are you a singer without instrument?
+          <span className="slider"></span>
         </label>
+        <span className="toggle-text">I'm a singer without an instrument</span>
       </div>
 
       <button onClick={handleSignup}>Sign Up as Admin</button>

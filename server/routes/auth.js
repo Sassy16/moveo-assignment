@@ -6,7 +6,7 @@ const User = require("../models/User");
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
 
-// Signup
+// User Signup
 router.post("/signup", async (req, res) => {
   try {
     const { username, password, instrument, isOnlyVocal } = req.body;
@@ -32,6 +32,7 @@ router.post("/signup", async (req, res) => {
   }
 });
 
+// Admin Signup
 router.post("/admin-signup", async (req, res) =>{
     try{
         const {username, password, instrument, isOnlyVocal} = req.body;
@@ -60,6 +61,7 @@ router.post("/admin-signup", async (req, res) =>{
     }
 });
 
+// Combined admin and user Login
 router.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;

@@ -17,6 +17,7 @@ module.exports = (io, socket) => {
     }
   });
 
+  // Admin selects a song
   socket.on("admin:select-song", ({ songId }) => {
     const user = socket.data.user;
     if (!user || !user.isAdmin) {
@@ -26,6 +27,7 @@ module.exports = (io, socket) => {
     io.to("main-room").emit("session:song-selected", { songId });
   });
 
+  // Admin ends the session
   socket.on("admin:quit-session", () => {
     const user = socket.data.user;
     if (!user || !user.isAdmin) {
@@ -35,6 +37,7 @@ module.exports = (io, socket) => {
     io.to("main-room").emit("session:ended");
   });
 
+  // Autoscroll controls
   socket.on("session:autoscroll-start", ({ speed = 1 }) => {
     const user = socket.data.user;
     if (!user) {
@@ -44,6 +47,7 @@ module.exports = (io, socket) => {
     io.to("main-room").emit("session:autoscroll", { running: true, speed });
   });
 
+  // Stop autoscroll
   socket.on("session:autoscroll-stop", () => {
     const user = socket.data.user;
     if (!user) {
@@ -53,6 +57,7 @@ module.exports = (io, socket) => {
     io.to("main-room").emit("session:autoscroll", { running: false });
   });
 
+  // Handle disconnection
   socket.on("disconnect", () => {
     const user = socket.data.user;
     if (user) {

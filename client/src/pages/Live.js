@@ -9,6 +9,7 @@ export default function Live() {
   const songId = query.get("songId");
   const token = localStorage.getItem("token");
 
+  // Get user info from token
   const user = useMemo(() => {
     if (!token) return null;
     try {
@@ -24,7 +25,7 @@ export default function Live() {
   const scrollRef = useRef(null);
   const rafRef = useRef();
 
-  // Fetch song JSON from backend
+  // Fetch song data
   useEffect(() => {
     if (!songId) {
       navigate("/main");
@@ -33,11 +34,17 @@ export default function Live() {
 
     axios
       .get(`http://localhost:4000/api/songs/${songId}`)
-      .then((res) => setSong(res.data))
-      .catch(() => navigate("/main"));
+      .then((res) => {
+        console.log("Fetched song:", res.data);
+        setSong(res.data); 
+      })
+      .catch((err) => {
+        console.error("Failed to load song:", err);
+        navigate("/main");
+      });
   }, [songId, navigate]);
 
-  // 2️⃣ Connect to socket and listen for events
+  // Setup socket connection
   useEffect(() => {
     if (!token) {
       navigate("/login");
@@ -62,7 +69,7 @@ export default function Live() {
     return () => s.disconnect();
   }, [token, navigate]);
 
-  // 3️⃣ Handle autoscroll behavior
+  // Handle autoscroll behavior
   useEffect(() => {
     cancelAnimationFrame(rafRef.current);
     if (!auto.running) return;
@@ -77,7 +84,7 @@ export default function Live() {
     return () => cancelAnimationFrame(rafRef.current);
   }, [auto]);
 
-  // 4️⃣ Socket actions
+  // Socket actions
   const startAutoScroll = () => {
     socket.emit("session:autoscroll-start", { speed: 0.7 });
   };
@@ -90,95 +97,46 @@ export default function Live() {
     socket.emit("admin:quit-session");
   };
 
+  // Detect Hebrew for direction
   const isHebrew = (text) => /[\u0590-\u05FF]/.test(text);
 
   return (
-    <div
-      style={{
-        padding: "20px",
-        background: "#000",
-        color: "#fff",
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <header style={{ marginBottom: "20px" }}>
-        <h1 style={{ fontSize: "32px", margin: 0 }}>{song?.title}</h1>
-        <h2 style={{ fontSize: "20px", opacity: 0.7 }}>{song?.artist}</h2>
+    <div className="live-container">
+      <header className="live-header">
+        <h1>{song?.title}</h1>
+        <h2>{song?.artist}</h2>
       </header>
 
-      <div
-        ref={scrollRef}
-        style={{
-          flex: 1,
-          overflowY: "auto",
-          fontSize: "24px",
-          lineHeight: 1.7,
-          padding: "10px",
-        }}
-      >
+      <div ref={scrollRef} className="lyrics-container">
         {song?.data?.map((line, idx) => (
           <div
             key={idx}
-            style={{
-              display: "flex",
-              gap: "20px",
-              flexWrap: "wrap",
-              direction: isHebrew(line?.[0]?.lyrics || "") ? "rtl" : "ltr",
-            }}
+            className={`lyrics-line ${
+              isHebrew(line?.[0]?.lyrics || "") ? "rtl" : "ltr"
+            }`}
           >
             {line.map((w, i) => (
-  <div
-    key={i}
-    style={{
-      display: "inline-flex",
-      flexDirection: "column",
-      alignItems: "center",
-      minWidth: "3ch", 
-      textAlign: "center",
-    }}
-  >
-    {!user?.isOnlyVocal && (
-      <span
-        style={{
-          fontFamily: "monospace",
-          fontSize: "0.9em",
-          height: "1.2em", 
-        }}
-      >
-        {w.chords || ""} 
-      </span>
-    )}
-    <span>{w.lyrics}</span>
-  </div>
-))}
-
+              <div key={i} className="word-block">
+                {!user?.isOnlyVocal && (
+                  <span className="chord">{w.chords || ""}</span>
+                )}
+                <span className="lyric">{w.lyrics}</span>
+              </div>
+            ))}
           </div>
         ))}
       </div>
 
-      <div
-        style={{
-          position: "fixed",
-          right: 20,
-          bottom: 20,
-          display: "flex",
-          gap: "10px",
-        }}
-      >
+      <div className="floating-controls">
         {!auto.running ? (
-          <button onClick={startAutoScroll}>Start Auto Scroll</button>
+          <button onClick={startAutoScroll}>▶ Start Auto Scroll</button>
         ) : (
-          <button onClick={stopAutoScroll}>Stop Auto Scroll</button>
+          <button onClick={stopAutoScroll}>⏸ Stop Auto Scroll</button>
         )}
 
         {user?.isAdmin && (
-          <button
-            onClick={quitSession}
-            style={{ background: "#900", color: "#fff" }}
-          >
-            Quit
+          <button className="quit-btn" onClick={quitSession}>
+            🚪 Quit
           </button>
         )}
       </div>
