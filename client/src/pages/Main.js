@@ -5,7 +5,6 @@ import "../App.css";
 
 export default function Main() {
   const navigate = useNavigate();
-  const [socket, setSocket] = useState(null);
   const [query, setQuery] = useState("");
   const token = localStorage.getItem("token");
 
