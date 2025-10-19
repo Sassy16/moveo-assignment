@@ -26,6 +26,8 @@ app.get('/api/health', (req, res) => {
   res.json({ ok: true });
 });
 
+console.log("Enviorment port:", process.env.PORT);
+
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
