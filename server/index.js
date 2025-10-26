@@ -27,6 +27,8 @@ app.get('/api/health', (req, res) => {
 });
 
 console.log("Environment PORT:", process.env.PORT);
+console.log("NODE_ENV:", process.env.NODE_ENV);
+console.log("Mongo URI (masked):", process.env.MONGO_URI ? "✅ Loaded" : "❌ Missing");
 
 // === MongoDB Connection ===
 mongoose.connect(process.env.MONGO_URI)
@@ -37,11 +39,14 @@ mongoose.connect(process.env.MONGO_URI)
 if (process.env.NODE_ENV === "production") {
   const clientPath = path.join(__dirname, "../client/build");
   app.use(express.static(clientPath));
+  console.log("✅ Serving React build from:", clientPath); // <-- added debugging line
 
   // Handle React routing, return all requests to index.html
   app.get(/.*/, (req, res) => {
     res.sendFile(path.join(clientPath, "index.html"));
   });
+} else {
+  console.log("🧩 Development mode — React app not being served by Express");
 }
 
 // === Socket.io Setup ===
