@@ -12,7 +12,7 @@ const songsRoutes = require("./routes/songs");
 const socketHandler = require('./socket-handler');
 
 const app = express();
-const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // === Middleware ===
 app.use(cors());
