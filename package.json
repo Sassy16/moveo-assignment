@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "install-client": "cd client && npm ci || npm install",
-    "install-server": "cd server && npm ci || npm install",
-    "build": "npm run install-client && npm run build --prefix client",
-    "start": "npm run install-server && npm start --prefix server",
-    "postinstall": "npm run build"
+    "install-client": "cd client && npm install",
+    "install-server": "cd server && npm install",
+    "build-client": "cd client && npm run build",
+    "start-server": "cd server && npm start",
+    "start": "npm run install-client && npm run install-server && npm run build-client && npm run start-server"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
