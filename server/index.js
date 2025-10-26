@@ -39,7 +39,7 @@ if (process.env.NODE_ENV === "production") {
   app.use(express.static(clientPath));
 
   // Handle React routing, return all requests to index.html
-  app.get("/*", (req, res) => {
+  app.get("/.*/", (req, res) => {
     res.sendFile(path.join(clientPath, "index.html"));
   });
 }
